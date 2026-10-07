@@ -20,3 +20,7 @@ python3 -m http.server 8765
 - Người chưa đăng nhập chỉ xem được; bấm **Đăng nhập admin** để thêm/sửa/xoá.
 - Đặt mật khẩu admin: chạy `./doi-mat-khau.sh`, rồi commit và deploy lại.
 - Lưu ý: đây là khóa phía giao diện, không phải bảo mật máy chủ; dữ liệu vẫn lưu riêng trên từng trình duyệt.
+
+## Phiên bản 2 (Supabase)
+
+Thư mục [`v2/`](v2/) chứa phiên bản dùng cơ sở dữ liệu Supabase, chịu được hàng trăm nghìn thiết bị và phân quyền admin thật. Xem [v2/README.md](v2/README.md).
