@@ -207,6 +207,9 @@ body.ro [data-admin],body:not(.ro) [data-viewer]{display:none!important}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 /* v2 */
+.row-actions{align-items:center;gap:4px}
+.row-actions .btn.txt{width:auto;padding:0 10px;color:var(--accent)}
+@media (max-width:860px){.row-actions .btn.txt span{display:none}.row-actions .btn.txt{width:36px;padding:0}}
 [hidden]{display:none!important}
 .ver{font-size:11px;padding:1px 6px;border-radius:5px;background:var(--accent-soft);color:var(--accent);margin-left:auto}
 .loading td{color:var(--fg-muted)}
@@ -740,7 +743,7 @@ async function renderMt(){
   if(error){$('#mt-body').innerHTML=`<tr><td colspan="6"><div class="err-banner">Lỗi tải dữ liệu: ${esc(error.message)}</div></td></tr>`;return}
   $('#mt-body').innerHTML=data.map(x=>{const d=x.devices;return `<tr><td>${fmtDate(x.date)}</td><td>${d?`<button class="btn ghost code" style="min-height:0;padding:0" data-detail="${x.device_id}">${esc(d.code)}</button><div class="sub">${esc(d.name)}</div>`:'<span class="sub">(đã xoá)</span>'}</td>
     <td style="white-space:normal;min-width:220px">${esc(x.descr)}<div class="sub">${esc(x.vendor||'')}</div></td><td>${x.status==='open'?'<span class="badge t-warn">Đang xử lý</span>':'<span class="badge t-ok">Hoàn thành</span>'}</td><td class="num">${fmtMoney(x.cost)}</td>
-    <td><div class="row-actions">${x.status==='open'?`<button class="btn ghost" data-admin style="min-height:36px" data-done="${x.id}">${icon('check')}Hoàn thành</button>`:''}<button class="btn icon ghost" data-admin data-delmt="${x.id}" aria-label="Xoá phiếu" style="color:var(--danger)">${icon('trash')}</button></div></td></tr>`}).join('')||'<tr><td colspan="6"><div class="empty">Chưa có phiếu bảo trì.</div></td></tr>';
+    <td><div class="row-actions">${x.status==='open'?`<button class="btn ghost txt" data-admin data-done="${x.id}" aria-label="Đánh dấu hoàn thành">${icon('check')}<span>Hoàn thành</span></button>`:''}<button class="btn icon ghost" data-admin data-delmt="${x.id}" aria-label="Xoá phiếu" style="color:var(--danger)">${icon('trash')}</button></div></td></tr>`}).join('')||'<tr><td colspan="6"><div class="empty">Chưa có phiếu bảo trì.</div></td></tr>';
   $('#mt-count').textContent=count?`${fmtN(from+1)}–${fmtN(from+data.length)} / ${fmtN(count)} phiếu`:'';
   pager($('#mt-pager'),mtPage,count||0,p=>{mtPage=p;renderMt()});
 }
