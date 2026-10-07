@@ -185,6 +185,8 @@ dialog form .dlg-b{flex:1;min-height:0}
 .toasts{position:fixed;bottom:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:50}
 .toast{background:var(--primary);color:var(--on-primary);padding:10px 16px;border-radius:8px;font-size:14px;box-shadow:var(--shadow);animation:pop .2s ease-out;display:flex;gap:8px;align-items:center}
 
+body.ro [data-admin],body:not(.ro) [data-viewer]{display:none!important}
+@media (max-width:480px){#ro-badge{display:none!important}}
 .scrim{display:none}
 @media (max-width:1100px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}}
 @media (max-width:860px){
@@ -228,6 +230,9 @@ dialog form .dlg-b{flex:1;min-height:0}
   <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
   <symbol id="i-sort" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
   <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
 </svg>
 
@@ -240,7 +245,7 @@ dialog form .dlg-b{flex:1;min-height:0}
       <button data-view="maintenance"><svg class="i"><use href="#i-wrench"/></svg>Bảo trì<span class="count" id="nav-mt"></span></button>
       <button data-view="people"><svg class="i"><use href="#i-users"/></svg>Nhân viên</button>
     </nav>
-    <div class="side-foot">Dữ liệu lưu trên trình duyệt này.<br><button class="btn ghost" id="reset-data" style="padding:0;min-height:32px;font-size:12px;color:var(--fg-muted)"><svg class="i" style="width:14px;height:14px"><use href="#i-reset"/></svg>Khôi phục dữ liệu mẫu</button></div>
+    <div class="side-foot">Dữ liệu lưu trên trình duyệt này.<br><button class="btn ghost" data-admin id="reset-data" style="padding:0;min-height:32px;font-size:12px;color:var(--fg-muted)"><svg class="i" style="width:14px;height:14px"><use href="#i-reset"/></svg>Khôi phục dữ liệu mẫu</button></div>
   </aside>
   <div class="scrim" id="scrim"></div>
 
@@ -248,8 +253,12 @@ dialog form .dlg-b{flex:1;min-height:0}
     <header class="top">
       <button class="btn icon ghost menu-btn" id="menu-btn" aria-label="Mở menu"><svg class="i"><use href="#i-menu"/></svg></button>
       <div class="grow"></div>
+      <span class="badge t-neutral" id="ro-badge" data-viewer>Chế độ chỉ xem</span>
+      <button class="btn" id="login-btn" data-viewer><svg class="i"><use href="#i-lock"/></svg><span>Đăng nhập admin</span></button>
+      <button class="btn ghost" id="pw-btn" data-admin aria-label="Đổi mật khẩu admin"><svg class="i"><use href="#i-key"/></svg><span class="hide-sm">Đổi mật khẩu</span></button>
+      <button class="btn ghost" id="logout-btn" data-admin><svg class="i"><use href="#i-logout"/></svg><span class="hide-sm">Đăng xuất</span></button>
       <button class="btn icon ghost" id="theme-btn" aria-label="Đổi giao diện sáng/tối"><svg class="i"><use href="#i-moon"/></svg></button>
-      <button class="btn primary" data-action="add-device"><svg class="i"><use href="#i-plus"/></svg><span>Thêm thiết bị</span></button>
+      <button class="btn primary" data-admin data-action="add-device"><svg class="i"><use href="#i-plus"/></svg><span>Thêm thiết bị</span></button>
     </header>
 
     <div class="content">
@@ -299,7 +308,7 @@ dialog form .dlg-b{flex:1;min-height:0}
       <!-- MAINTENANCE -->
       <section class="view" id="view-maintenance" aria-labelledby="h-mt" hidden>
         <div class="page-h"><div><h1 id="h-mt">Bảo trì &amp; sửa chữa</h1><p>Lịch sử và yêu cầu bảo trì thiết bị.</p></div>
-          <button class="btn primary" id="add-mt"><svg class="i"><use href="#i-plus"/></svg>Tạo phiếu</button></div>
+          <button class="btn primary" data-admin id="add-mt"><svg class="i"><use href="#i-plus"/></svg>Tạo phiếu</button></div>
         <div class="kpis" id="mt-kpis"></div>
         <div class="card">
           <div class="table-wrap" style="border-top:0">
@@ -347,7 +356,7 @@ dialog form .dlg-b{flex:1;min-height:0}
 <dialog id="dlg-detail" aria-labelledby="dlg-detail-t">
   <div class="dlg-h"><h2 id="dlg-detail-t"></h2><button type="button" class="btn icon ghost" data-close aria-label="Đóng"><svg class="i"><use href="#i-x"/></svg></button></div>
   <div class="dlg-b" id="detail-body"></div>
-  <div class="dlg-f"><button class="btn" id="detail-mt"><svg class="i"><use href="#i-wrench"/></svg>Tạo phiếu bảo trì</button><button class="btn primary" id="detail-edit"><svg class="i"><use href="#i-edit"/></svg>Sửa</button></div>
+  <div class="dlg-f"><button class="btn" data-admin id="detail-mt"><svg class="i"><use href="#i-wrench"/></svg>Tạo phiếu bảo trì</button><button class="btn primary" data-admin id="detail-edit"><svg class="i"><use href="#i-edit"/></svg>Sửa</button></div>
 </dialog>
 
 <!-- Maintenance dialog -->
@@ -371,6 +380,28 @@ dialog form .dlg-b{flex:1;min-height:0}
   <div class="dlg-h"><h2 id="cf-t">Xác nhận xoá</h2></div>
   <div class="dlg-b" id="cf-msg"></div>
   <div class="dlg-f"><button class="btn" data-close>Huỷ</button><button class="btn danger" id="cf-ok"><svg class="i"><use href="#i-trash"/></svg>Xoá</button></div>
+</dialog>
+
+<!-- Login dialog -->
+<dialog id="dlg-login" aria-labelledby="lg-t" style="width:min(400px,calc(100vw - 32px))">
+  <form id="form-login" novalidate>
+    <div class="dlg-h"><h2 id="lg-t">Đăng nhập admin</h2><button type="button" class="btn icon ghost" data-close aria-label="Đóng"><svg class="i"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-b"><div class="field"><label for="lg-pw">Mật khẩu</label><input class="input" id="lg-pw" type="password" autocomplete="current-password" required><span class="err" id="e-lg" role="alert"></span></div></div>
+    <div class="dlg-f"><button type="button" class="btn" data-close>Huỷ</button><button type="submit" class="btn primary"><svg class="i"><use href="#i-lock"/></svg>Đăng nhập</button></div>
+  </form>
+</dialog>
+
+<!-- Change password dialog -->
+<dialog id="dlg-pw" aria-labelledby="pw-t" style="width:min(400px,calc(100vw - 32px))">
+  <form id="form-pw" novalidate>
+    <div class="dlg-h"><h2 id="pw-t">Đổi mật khẩu admin</h2><button type="button" class="btn icon ghost" data-close aria-label="Đóng"><svg class="i"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-b"><div class="form" style="grid-template-columns:1fr">
+      <div class="field"><label for="pw-old">Mật khẩu hiện tại</label><input class="input" id="pw-old" type="password" autocomplete="current-password"></div>
+      <div class="field"><label for="pw-new">Mật khẩu mới (ít nhất 6 ký tự)</label><input class="input" id="pw-new" type="password" autocomplete="new-password"></div>
+      <div class="field"><label for="pw-new2">Nhập lại mật khẩu mới</label><input class="input" id="pw-new2" type="password" autocomplete="new-password"><span class="err" id="e-pw" role="alert"></span></div>
+    </div></div>
+    <div class="dlg-f"><button type="button" class="btn" data-close>Huỷ</button><button type="submit" class="btn primary"><svg class="i"><use href="#i-check"/></svg>Lưu</button></div>
+  </form>
 </dialog>
 
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
@@ -516,7 +547,7 @@ function renderDevices(){
   $('#dev-body').innerHTML=slice.map(d=>{const n=daysTo(d.warrantyEnd);const w=n===null?'—':n<0?`<span style="color:var(--danger)">Hết hạn</span>`:n<=90?`<span style="color:var(--warn)">${fmtDate(d.warrantyEnd)}</span>`:fmtDate(d.warrantyEnd);
     return `<tr><td class="code">${esc(d.code)}</td><td><div class="name">${esc(d.name)}</div><div class="sub">${TYPES[d.type]} · <span class="code">${esc(d.serial)}</span></div></td><td>${badge(d.status)}</td>
     <td>${d.assignee?`<div>${esc(d.assignee)}</div>`:'<div class="sub">—</div>'}<div class="sub">${esc(d.dept)}</div></td><td class="hide-sm">${w}</td><td class="num hide-sm">${fmtMoney(d.price)}</td>
-    <td><div class="row-actions"><button class="btn icon ghost" data-detail="${d.id}" aria-label="Xem ${esc(d.code)}">${icon('eye')}</button><button class="btn icon ghost" data-edit="${d.id}" aria-label="Sửa ${esc(d.code)}">${icon('edit')}</button><button class="btn icon ghost" data-del="${d.id}" aria-label="Xoá ${esc(d.code)}" style="color:var(--danger)">${icon('trash')}</button></div></td></tr>`}).join('')
+    <td><div class="row-actions"><button class="btn icon ghost" data-detail="${d.id}" aria-label="Xem ${esc(d.code)}">${icon('eye')}</button><button class="btn icon ghost" data-admin data-edit="${d.id}" aria-label="Sửa ${esc(d.code)}">${icon('edit')}</button><button class="btn icon ghost" data-admin data-del="${d.id}" aria-label="Xoá ${esc(d.code)}" style="color:var(--danger)">${icon('trash')}</button></div></td></tr>`}).join('')
     ||`<tr><td colspan="7"><div class="empty">${icon('search','width:28px;height:28px')}<p>Không tìm thấy thiết bị phù hợp.</p></div></td></tr>`;
   $('#dev-count').textContent=`Hiển thị ${slice.length} / ${rows.length} thiết bị`;
   $('#pager').innerHTML=pages>1?Array.from({length:pages},(_,i)=>`<button class="btn ${i+1===state.page?'primary':''}" data-page="${i+1}" ${i+1===state.page?'aria-current="page"':''} aria-label="Trang ${i+1}">${i+1}</button>`).join(''):'';
@@ -541,6 +572,7 @@ $('#export-csv').onclick=()=>{
 /* ---------- device form ---------- */
 let editing=null;
 function openDevice(id){
+  if(!requireAdmin())return;
   editing=id?db.devices.find(d=>d.id===id):null;
   const f=$('#form-dev');f.reset();$$('#form-dev .err').forEach(e=>e.textContent='');$$('#form-dev [aria-invalid]').forEach(e=>e.removeAttribute('aria-invalid'));
   $('#d-type').innerHTML=Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
@@ -588,11 +620,12 @@ $('#detail-mt').onclick=()=>{$('#dlg-detail').close();openMt(detailId)};
 
 /* delete */
 let delFn=null;
-function confirmDel(msg,fn){$('#cf-msg').innerHTML=msg;delFn=fn;$('#dlg-confirm').showModal()}
+function confirmDel(msg,fn){if(!requireAdmin())return;$('#cf-msg').innerHTML=msg;delFn=fn;$('#dlg-confirm').showModal()}
 $('#cf-ok').onclick=()=>{delFn&&delFn();$('#dlg-confirm').close()};
 
 /* ---------- maintenance ---------- */
 function openMt(devId){
+  if(!requireAdmin())return;
   const f=$('#form-mt');f.reset();$('#e-desc').textContent='';
   $('#m-dev').innerHTML=db.devices.filter(d=>d.status!=='retired').map(d=>`<option value="${d.id}">${esc(d.code)} — ${esc(d.name)}</option>`).join('');
   if(devId)$('#m-dev').value=devId;f.elements.date.value=today();
@@ -615,7 +648,7 @@ function renderMt(){
   $('#mt-kpis').innerHTML=k('wrench','t-warn','Đang xử lý',db.mts.filter(x=>x.status==='open').length,'phiếu')+k('check','t-ok','Hoàn thành',db.mts.filter(x=>x.status==='done').length,'phiếu')+k('grid','t-info','Chi phí năm '+yr,fmtShort(cost),'VNĐ');
   $('#mt-body').innerHTML=m.map(x=>{const d=db.devices.find(y=>y.id===x.deviceId);return `<tr><td>${fmtDate(x.date)}</td><td>${d?`<div class="code">${esc(d.code)}</div><div class="sub">${esc(d.name)}</div>`:'<span class="sub">(đã xoá)</span>'}</td>
     <td style="white-space:normal;min-width:220px">${esc(x.desc)}<div class="sub">${esc(x.vendor||'')}</div></td><td>${x.status==='open'?'<span class="badge t-warn">Đang xử lý</span>':'<span class="badge t-ok">Hoàn thành</span>'}</td><td class="num">${fmtMoney(x.cost)}</td>
-    <td><div class="row-actions">${x.status==='open'?`<button class="btn ghost" style="min-height:36px" data-done="${x.id}">${icon('check')}Hoàn thành</button>`:''}<button class="btn icon ghost" data-delmt="${x.id}" aria-label="Xoá phiếu" style="color:var(--danger)">${icon('trash')}</button></div></td></tr>`}).join('')||'<tr><td colspan="6"><div class="empty">Chưa có phiếu bảo trì.</div></td></tr>';
+    <td><div class="row-actions">${x.status==='open'?`<button class="btn ghost" data-admin style="min-height:36px" data-done="${x.id}">${icon('check')}Hoàn thành</button>`:''}<button class="btn icon ghost" data-admin data-delmt="${x.id}" aria-label="Xoá phiếu" style="color:var(--danger)">${icon('trash')}</button></div></td></tr>`}).join('')||'<tr><td colspan="6"><div class="empty">Chưa có phiếu bảo trì.</div></td></tr>';
 }
 
 /* ---------- people ---------- */
@@ -628,6 +661,31 @@ function renderPeople(){
 }
 
 /* ---------- global ---------- */
+/* ---------- admin (khóa giao diện, không phải bảo mật máy chủ) ---------- */
+// SHA-256 của mật khẩu mặc định. Đổi mật khẩu trong giao diện sẽ lưu mã băm mới trên trình duyệt này.
+const DEFAULT_ADMIN_HASH='240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+const AUTH_KEY=KEY+'-admin', HASH_KEY=KEY+'-admin-hash';
+const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+const getHash=()=>{try{return localStorage.getItem(HASH_KEY)||DEFAULT_ADMIN_HASH}catch(e){return DEFAULT_ADMIN_HASH}};
+let admin=false;try{admin=sessionStorage.getItem(AUTH_KEY)==='1'}catch(e){}
+const isAdmin=()=>admin;
+function setAdmin(v){admin=v;try{v?sessionStorage.setItem(AUTH_KEY,'1'):sessionStorage.removeItem(AUTH_KEY)}catch(e){}document.body.classList.toggle('ro',!v);render()}
+function requireAdmin(){if(admin)return true;openLogin();return false}
+function openLogin(){$('#form-login').reset();$('#e-lg').textContent='';$('#lg-pw').removeAttribute('aria-invalid');$('#dlg-login').showModal();$('#lg-pw').focus()}
+$('#login-btn').onclick=openLogin;
+$('#logout-btn').onclick=()=>{setAdmin(false);toast('Đã đăng xuất')};
+$('#form-login').addEventListener('submit',async e=>{e.preventDefault();const pw=$('#lg-pw').value;
+  if(pw&&await sha256(pw)===getHash()){$('#dlg-login').close();setAdmin(true);toast('Đăng nhập admin thành công')}
+  else{$('#e-lg').textContent='Mật khẩu không đúng';$('#lg-pw').setAttribute('aria-invalid','true');$('#lg-pw').select()}});
+$('#pw-btn').onclick=()=>{$('#form-pw').reset();$('#e-pw').textContent='';$('#dlg-pw').showModal();$('#pw-old').focus()};
+$('#form-pw').addEventListener('submit',async e=>{e.preventDefault();const o=$('#pw-old').value,n=$('#pw-new').value,n2=$('#pw-new2').value,er=$('#e-pw');
+  if(await sha256(o)!==getHash())return er.textContent='Mật khẩu hiện tại không đúng';
+  if(n.length<6)return er.textContent='Mật khẩu mới cần ít nhất 6 ký tự';
+  if(n!==n2)return er.textContent='Hai mật khẩu mới không khớp';
+  try{localStorage.setItem(HASH_KEY,await sha256(n))}catch(err){return er.textContent='Trình duyệt không cho lưu mật khẩu'}
+  $('#dlg-pw').close();toast('Đã đổi mật khẩu')});
+document.body.classList.toggle('ro',!admin);
+
 function render(){
   $('#nav-dev').textContent=db.devices.length;
   const o=db.mts.filter(m=>m.status==='open').length;$('#nav-mt').textContent=o||'';
@@ -640,7 +698,7 @@ document.addEventListener('click',e=>{
   else if(t.dataset.action==='add-device')openDevice();
   else if(t.hasAttribute('data-close'))t.closest('dialog').close();
   else if(t.dataset.goto){if(t.dataset.filter==='warranty'){Object.assign(state,{warranty:true,status:'',type:'',dept:'',q:'',page:1});$('#q').value=''}go(t.dataset.goto)}
-  else if(t.dataset.done){const m=db.mts.find(x=>x.id===t.dataset.done);m.status='done';const d=db.devices.find(x=>x.id===m.deviceId);
+  else if(t.dataset.done){if(!requireAdmin())return;const m=db.mts.find(x=>x.id===t.dataset.done);m.status='done';const d=db.devices.find(x=>x.id===m.deviceId);
     if(d&&d.status==='repair'&&!db.mts.some(x=>x.deviceId===d.id&&x.status==='open')){d.status=d.prevStatus||(d.assignee?'in_use':'available');delete d.prevStatus}
     save();toast('Đã hoàn thành phiếu');render()}
   else if(t.dataset.delmt){confirmDel('Xoá phiếu bảo trì này? Hành động không thể hoàn tác.',()=>{db.mts=db.mts.filter(x=>x.id!==t.dataset.delmt);save();toast('Đã xoá phiếu');render()})}
